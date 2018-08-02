@@ -1,21 +1,50 @@
 import java.util.*;
+import java.io.*;
 
 public class rh{
 
 	public static void main(String[] args){
+		String reviews[] = new String[128]; //Assumption
+		int reviewIndex = 0;
+		FileReader in = null;
+		BufferedReader br = null;
+		if(args.length == 2){
+			try {
+				in = new FileReader(args[0]);
+				br = new BufferedReader(in);
+
+				String line;
+				try{
+					while ((line = br.readLine()) != null) {
+					    reviews[reviewIndex++] = line;
+					}
+				}
+				catch(IOException e) {
+				  e.printStackTrace();
+				}
+
+			}
+			catch (FileNotFoundException ex)  
+		    {
+		        // insert code to run when exception occurs
+		    }
+		} else{
+			System.out.println("Wrong number of arguments.");
+			System.exit(1);
+		}
+
+
 		/* 
 	    	Test reviews
 			Should read in a file
 		*/
-		String reviews[] = {"The price here was reasonable. They had clean bathrooms.",
-							"Their bathrooms were really nice. I loved the sandwiches",
-							"sandwiches"};
+	
 		//All sentences 
 		Sentence sentences[] = new Sentence[100];
 		// Global index
 		int index = 0;
 
-		Scanner in = new Scanner(System.in);
+		// Scanner in = new Scanner(System.in);
 		Map<String,Integer> wordValue = new HashMap<String,Integer>();
 
 		//Dictionary initialization
@@ -28,18 +57,21 @@ public class rh{
 
 		//loop through each word in each review and counts each occurence in HashMap
 		for(String review : reviews){
-			for(String word : review.split("[\\s@&.?$+-]+")){
+			if(review == null) break;
+			for(String word : review.split("[\\s@&.,?$+-]+")){
 				int value = wordValue.containsKey(word) ? wordValue.get(word) : 0;
+				// System.out.println(word+ " "+value);
 				wordValue.put(word, value + 1);
 			}
 		}
 
 		//loop through each review and creates sentences with average points
 		for(String review : reviews){
+			if(review == null) break;
 			String sentence = "";
 			double points = 0.0;
 			int words = 0;
-			for(String word : review.split(" ")){
+			for(String word : review.split("[\\s@,&?$+-]+")){
 				if(d.get(word) != null){
 					points += d.get(word);
 				}
@@ -56,7 +88,10 @@ public class rh{
 					words = 0;
 				} else {
 					sentence = sentence + " " + word;
-					points += wordValue.get(word); 
+					// System.out.println(word+ " " + wordValue.get(word));
+					if(wordValue.get(word)!=null){
+						points += wordValue.get(word);
+					} 
 					words++;
 				}
 			}
