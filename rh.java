@@ -13,8 +13,8 @@ public class rh{
 		//Max number of highlights
 		int maxNum = -1;
 		//File variables
-		FileReader in = null;
-		BufferedReader br = null;
+		FileReader in = null; 
+		BufferedReader br = null; 
 
 		//List of Sentence class
 		List<Sentence> sent = new ArrayList<>();
@@ -63,8 +63,8 @@ public class rh{
 		if(args.length == 2){
 			try {
 				//Sets arguments variables
-				in = new FileReader(args[0]);
-				br = new BufferedReader(in);
+				in = new FileReader(args[0]); // Initialize File Reader
+				br = new BufferedReader(in); // Initialize Read Buffer
 				maxNum = Integer.parseInt(args[1]);
 
 				String line;
@@ -88,15 +88,15 @@ public class rh{
 			System.exit(1);
 		}
 
-
-
 		//Loops through each word in each review, ignoring special characters and white spaces
 		//Increment each words value for each occurence
 		for(String review : reviews){
 			//If review is null, skip
 			if(review == null) break;
+
 			//For loop for each word in the review splitting on white space and special characters
 			for(String word : review.split("[\\s@&.,?$+-]+")){
+
 				//If word is in exclusion list, skip
 				if(excludes.contains(word)){
 					continue;
@@ -106,12 +106,14 @@ public class rh{
 				//Stores word in HashMap wordValue
 				double value = wordValue.containsKey(word) ? wordValue.get(word) : 1.0;
 				wordValue.put(word, value * 1.5);
+
 			}
 		}
 
 		//Loops through each review and breaks them up into sentences
 		//Each sentence is awarded an average point which is determined by (total points)/number of words
 		for(String review : reviews){
+
 			//If review is null, skip
 			if(review == null) break;
 			//Logic for end of sentence
@@ -120,29 +122,38 @@ public class rh{
 			String sentence = "";
 			double points = 0.0;
 			int words = 0;
+
 			//For loop for words splitting on white space and special characters EXCLUDING "."
 			for(String word : review.split("[\\s@,&?$+-]+")){
+
 				//If word is null, skip
 				if(word == null) break;
+
 				//Construct sentence
 				sentence = sentence + " " + word; 
+
 				//If word ends with ".", remove "." from word and set end of sentence to true
 				if(word.endsWith(".")){
 					word = word.substring(0, word.length() - 1);
 					end = true;
 				}
+
 				//Puts word in lowercase to count occurences of capitalization
 				word = word.toLowerCase();
+
 				//If word is a keyword, increment points
 				if(d.get(word) != null){
 					points += d.get(word);
 				}
+
 				//If word exists in HashMap, increment points
 				if(wordValue.get(word)!=null){
 						points += wordValue.get(word);
 				} 
+
 				//Increment number of words
 				words++;
+				
 				//If end of sentence, construct new Sentence class and add it to ArrayList
 				if(end == true){
 					Sentence newSentence = new Sentence(sentence, points/words);
