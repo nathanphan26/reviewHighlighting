@@ -96,13 +96,14 @@ public class rh{
 
 			//For loop for each word in the review splitting on white space and special characters
 			for(String word : review.split("[\\s@&.,?$+-]+")){
-
+				//Puts word in lowercase to count occurences of capitalization
+				word = word.toLowerCase();
+				
 				//If word is in exclusion list, skip
 				if(excludes.contains(word)){
 					continue;
 				}
-				//Puts word in lowercase to count occurences of capitalization
-				word = word.toLowerCase();
+				
 				//Stores word in HashMap wordValue
 				double value = wordValue.containsKey(word) ? wordValue.get(word) : 1.0;
 				wordValue.put(word, value * 1.5);
