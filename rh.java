@@ -4,11 +4,37 @@ import java.io.*;
 public class rh{
 
 	public static void main(String[] args){
+
+		//Variable initialization
 		String reviews[] = new String[128]; //Assumption
 		int reviewIndex = 0;
 		int maxNum = -1;
 		FileReader in = null;
 		BufferedReader br = null;
+
+		//List of Sentence class
+		List<Sentence> sent = new ArrayList<>();
+
+		//HashMap to keep track of each words occurence
+		Map<String,Double> wordValue = new HashMap<String,Double>();
+
+		//Keyword initialization
+		Map<String, Integer> d = new HashMap<String, Integer>();
+		d.put("price", 5);
+		d.put("service", 5);
+		d.put("quality", 5);
+		d.put("clean", 5);
+		d.put("cleanliness", 5);
+
+		//Excluded words initialization
+		Set<String> excludes = new HashSet<String>();
+		excludes.add("and");
+		excludes.add("i");
+		excludes.add("is");
+		excludes.add("the");
+		excludes.add("was");
+
+		//Checks if correct number of arguments
 		if(args.length == 2){
 			try {
 				in = new FileReader(args[0]);
@@ -28,7 +54,6 @@ public class rh{
 			}
 			catch (FileNotFoundException ex)  
 		    {
-		        // insert code to run when exception occurs
 		    }
 		} else{
 			System.out.println("Wrong number of arguments.");
@@ -36,47 +61,20 @@ public class rh{
 		}
 
 
-		/* 
-	    	Test reviews
-			Should read in a file
-		*/
-	
-		//All sentences 
-		Sentence sentences[] = new Sentence[100];
-		List<Sentence> sent = new ArrayList<>();
-		// Global index
-		int index = 0;
 
-		// Scanner in = new Scanner(System.in);
-		Map<String,Double> wordValue = new HashMap<String,Double>();
-
-		//Dictionary initialization
-		Map<String, Integer> d = new HashMap<String, Integer>();
-		d.put("price", 5);
-		d.put("service", 5);
-		d.put("quality", 5);
-		d.put("clean", 5);
-		d.put("cleanliness", 5);
-
-		Set<String> excludes = new HashSet<String>();
-		excludes.add("and");
-		excludes.add("i");
-		excludes.add("is");
-		excludes.add("the");
-		excludes.add("was");
-
-		//loop through each word in each review and counts each occurence in HashMap
+		//Loops through each word in each review, ignoring special characters and white spaces
+		//Increment each words value for each occurence
 		for(String review : reviews){
 			if(review == null) break;
 			for(String word : review.split("[\\s@&.,?$+-]+")){
 				word = word.toLowerCase();
 				double value = wordValue.containsKey(word) ? wordValue.get(word) : 1.0;
-				// System.out.println(word+ " "+value);
 				wordValue.put(word, value * 1.5);
 			}
 		}
 
-		//loop through each review and creates sentences with average points
+		//Loops through each review and breaks them up into sentences
+		//Each sentence is awarded an average point which is determined by (total points)/number of words
 		for(String review : reviews){
 			if(review == null) break;
 			boolean end = false;
@@ -103,7 +101,6 @@ public class rh{
 				words++;
 				if(end == true){
 					Sentence newSentence = new Sentence(sentence, points/words);
-					//sentences[index++] = newSentence;
 					sent.add(newSentence);
 					sentence = "";
 					points = 0.0;
@@ -113,27 +110,12 @@ public class rh{
 			}
 		}
 
+		//Sorts ArrayList with Overrided method in Sentence class
 		Collections.sort(sent);
-		// for(Sentence s : sent){
-		// 	System.out.println("s.value: " + s.value);
-		// }
 
 		for(int i = 0; i<(maxNum>sent.size() ? sent.size() : maxNum); i++){
 			System.out.println(sent.get(i).sentenceCls);
 		}
-
-		/* DEBUGGING */
-		// System.out.println("HASHMAP KEY AND VALUES");
-		// System.out.printf("%-15s|%-5s\n\n", "Key", "Value");
-		// for(String word : wordValue.keySet()){
-		// 	System.out.printf("%-15s|%5f\n", word, wordValue.get(word));
-		// }
-		// System.out.println();
-		// for(Sentence sentence : sent){
-		// 	if(sentence == null) continue;
-		// 	System.out.printf("Sentence: %s | Average Value: %.2f\n", sentence.sentenceCls, sentence.value);
-		// }
-		/* /DEBUGGING */
 	}
 }
 
@@ -150,6 +132,7 @@ class Sentence implements Comparable{
 		return value;
 	}
 
+	//Overrides compareTo method to suit our sorting needs for this class
 	@Override
 	public int compareTo(Object s1){
 		return Double.valueOf(((Sentence) s1).getValue()).compareTo(Double.valueOf(this.getValue()));
