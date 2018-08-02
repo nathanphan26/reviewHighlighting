@@ -48,17 +48,25 @@ public class rh{
 		Map<String,Integer> wordValue = new HashMap<String,Integer>();
 
 		//Dictionary initialization
-		Dictionary<String, Integer> d = new Hashtable<String, Integer>();
+		Map<String, Integer> d = new HashMap<String, Integer>();
 		d.put("price", 5);
 		d.put("service", 5);
 		d.put("quality", 5);
 		d.put("clean", 5);
 		d.put("cleanliness", 5);
 
+		Set<String> excludes = new HashSet<String>();
+		excludes.add("and");
+		excludes.add("i");
+		excludes.add("is");
+		excludes.add("the");
+		excludes.add("was");
+
 		//loop through each word in each review and counts each occurence in HashMap
 		for(String review : reviews){
 			if(review == null) break;
 			for(String word : review.split("[\\s@&.,?$+-]+")){
+				word = word.toLowerCase();
 				int value = wordValue.containsKey(word) ? wordValue.get(word) : 0;
 				// System.out.println(word+ " "+value);
 				wordValue.put(word, value + 1);
